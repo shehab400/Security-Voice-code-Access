@@ -11,27 +11,34 @@ import wave
 import pyaudio
 import time
 import threading
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from Voice import *
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
-        self.RecordBtn = MyButton('Record',self)
-        pixmap = QtGui.QPixmap('Images\\Record.png').scaled(15, 15, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        self.RecordBtn.setPixmap(pixmap)
+        self.ui = uic.loadUi("GUI.ui", self)
+        self.setWindowTitle('Voice Access')
+        self.RecordBtn = self.ui.pushButton
         self.RecordBtn.clicked.connect(self.StartRecording)
         self.isRecording = False
-        self.textLabel = QLabel("00:00:00",self)
-        self.textLabel.move(25,30)
+        self.textLabel = self.ui.label_2
+        self.sampleVoice = Voice(False)
+         # Create Matplotlib figure and axes
+        self.matplotlib_figure, self.matplotlib_axes = plt.subplots()
+        self.matplotlib_axes.set_axis_off()  # Turn off axes for spectrogram
+        # Create Matplotlib widget to embed in PyQT layout
+        self.matplotlib_widget = FigureCanvasQTAgg(self.matplotlib_figure)
+        self.matplotlib_axes.set_facecolor('black')
+        self.matplotlib_figure.patch.set_facecolor('black')
+        self.ui.frame_19.layout().addWidget(self.matplotlib_widget)
 
     def StartRecording(self):
         if self.isRecording == False:
-            pixmap = QtGui.QPixmap('Images\\StopRecording.png').scaled(18, 18, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            self.RecordBtn.setPixmap(pixmap)
             self.isRecording = True
             threading.Thread(target=self.record).start()
         else:
-            pixmap = QtGui.QPixmap('Images\\Record.png').scaled(15, 15, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            self.RecordBtn.setPixmap(pixmap)
             self.isRecording = False
             
     def record(self):
@@ -40,19 +47,19 @@ class MyWindow(QMainWindow):
         frames = []
         start = time.time()
 
-        while self.isRecording:
+        for i in range(0, int(44100/1024 * 4)):
             data = stream.read(1024)
             frames.append(data)
-
             passed = time.time() - start
             secs = passed % 60
             mins = passed // 60
             hours = mins // 60
-            self.textLabel.setText(f"{int(hours):02d}:{int(mins):02d}:{int(secs):02d}")
+            self.textLabel.setText(f"{int(hours):02d}:{int(mins):02d}:{int(4-secs):02d}")
         
         stream.stop_stream()
         stream.close()
         audio.terminate()
+        self.isRecording = False
 
         exists = True
         i = 1
@@ -68,5 +75,19 @@ class MyWindow(QMainWindow):
         sound_file.setframerate(44100)
         sound_file.writeframes(b"".join(frames))
         sound_file.close()
+        self.textLabel.setText("Loading...")
+        self.sampleVoice.voiceInitializer(f"recording{i}.wav")
+        self.generate_spectrogram(self.sampleVoice.data,self.sampleVoice.fs)
+
+    def generate_spectrogram(self, data, fs):
+        frequencies, times, Pxx = spectrogram(data, fs)
+        self.matplotlib_axes.clear()
+        # Plot the spectrogram in the Matplotlib figure
+        self.matplotlib_axes.pcolormesh(times, frequencies, 10 * np.log10(Pxx), shading='auto', cmap='viridis')
+        self.matplotlib_axes.set_xlabel('Time (s)')
+        self.matplotlib_axes.set_ylabel('Frequency (Hz)')
+        self.matplotlib_axes.set_title('Spectrogram')
+        self.matplotlib_axes.set_aspect('auto')
+        self.matplotlib_widget.draw()
 
         
