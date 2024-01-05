@@ -100,6 +100,50 @@
               </widget>
              </item>
              <item>
+              <widget class="QComboBox" name="comboBox">
+               <item>
+                <property name="text">
+                 <string>Person 1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 6</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 7</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Person 8</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_4">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
@@ -198,6 +242,32 @@
                      </layout>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QFrame" name="frame_23">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_7">
+                      <item>
+                       <widget class="QLabel" name="label_11">
+                        <property name="text">
+                         <string>Person 4</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QProgressBar" name="progressBar">
+                        <property name="value">
+                         <number>0</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -225,7 +295,7 @@
                       <item>
                        <widget class="QLabel" name="label_8">
                         <property name="text">
-                         <string>Person 4</string>
+                         <string>Person 5</string>
                         </property>
                        </widget>
                       </item>
@@ -251,7 +321,7 @@
                       <item>
                        <widget class="QLabel" name="label_9">
                         <property name="text">
-                         <string>Person 5</string>
+                         <string>Person 6</string>
                         </property>
                        </widget>
                       </item>
@@ -277,12 +347,38 @@
                       <item>
                        <widget class="QLabel" name="label_10">
                         <property name="text">
-                         <string>Person 6</string>
+                         <string>Person 7</string>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QProgressBar" name="progressBar_22">
+                        <property name="value">
+                         <number>0</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_24">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_11">
+                      <item>
+                       <widget class="QLabel" name="label_12">
+                        <property name="text">
+                         <string>Person 8</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QProgressBar" name="progressBar_2">
                         <property name="value">
                          <number>0</number>
                         </property>
