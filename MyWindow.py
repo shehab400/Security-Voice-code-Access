@@ -213,7 +213,10 @@ class MyWindow(QMainWindow):
                 max = sim3
                 person = "Person 3"
 
-        self.textLabel.setText(person)
+        if self.ui.comboBox.currentText() == person:
+            self.textLabel.setText("ACESS GRANTED😁")
+        else:
+            self.textLabel.setText("ACESS DENIED😢")
                 # print(f"For test {index + 1} the recognized student was Person 3")
                 # closest_match_vals[3].append(test)
                     
