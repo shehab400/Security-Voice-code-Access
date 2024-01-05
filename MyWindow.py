@@ -128,8 +128,6 @@ class MyWindow(QMainWindow):
         
         def Training(speaker,flag,number=10,filename = None,trainingNum = 30):
             sentences = ["open middle door ","grant me access ","unlock the gate "]
-            if speaker==1 or flag == 2:
-                sentences = ["open middle door "]
             for sentence in sentences:
                 for i in range(1, number+1):
                     # Create a string which represents the file path
@@ -175,10 +173,10 @@ class MyWindow(QMainWindow):
                 feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
                 # Append the test vectors to the list
                 test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
-        Training(1,1,trainingNum=10)
+        Training(1,1)
         Training(2,1)
         Training(3,1)
-        Training(2,2,1,self.sampleVoice.path,trainingNum=10)
+        Training(2,2,1,self.sampleVoice.path)
         # list of avg feature vectors (training)
         feat_vector_list = [feat_vector[val] for val in feat_vector]
 
@@ -206,9 +204,11 @@ class MyWindow(QMainWindow):
                 person = "Person 2"
 
             sim3 = round((1-(abs(test-feat_vector[3]))/feat_vector[3])*100,2)
+            if sim3 < 0:
+                sim3 = 3
             print(f"For test {index + 1} the recognized student was Person 3\nSimilarity = {sim3}%")
-            self.ui.progressBar_17.setValue(int(sim3))
-            closest_match_vals[2].append(sim3)
+            self.ui.progressBar_18.setValue(int(sim3))
+            closest_match_vals[3].append(sim3)
             if sim3 > max:
                 max = sim3
                 person = "Person 3"
