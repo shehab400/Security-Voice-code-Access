@@ -114,7 +114,7 @@ class MyWindow(QMainWindow):
 
 
     def recognizeSpeaker(self):
-        AUDIO_FILE_PATH = 'C:/Users/dolla/OneDrive/Documents/GitHub/Security-Voice-code-Access/Audio Files'
+        AUDIO_FILE_PATH = 'Audio Files'
         # A dictionary which stores dominant frequency values for each speaker
         # The keys are student codes
         # ALL Dominant frequency values for each student
@@ -128,6 +128,8 @@ class MyWindow(QMainWindow):
         
         def Training(speaker,flag,number=10,filename = None,trainingNum = 30):
             sentences = ["open middle door ","grant me access ","unlock the gate "]
+            if flag == 2:
+                sentences = [""]
             for sentence in sentences:
                 for i in range(1, number+1):
                     # Create a string which represents the file path
