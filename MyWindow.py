@@ -122,8 +122,8 @@ class MyWindow(QMainWindow):
             feature = []
             label = []
             directory_path = 'Audio Files'
-            if sentence == "":
-                speakers = ['random']
+            # if sentence == "":
+            #     speakers = ['random']
             for speaker in speakers:
                 for i in range(1,number+1):
                     # Assuming audio files are in WAV format
@@ -173,13 +173,13 @@ class MyWindow(QMainWindow):
         X_unlock = np.array(feature_list_unlock)
         y_unlock = np.array(label_list_unlock)
 
-        feature_list_random ,label_list_random = extract_features_labels(3,"",number=24)
-        X_random = np.array(feature_list_random)
-        y_random = np.array(label_list_random)
+        # feature_list_random ,label_list_random = extract_features_labels(3,"",number=24)
+        # X_random = np.array(feature_list_random)
+        # y_random = np.array(label_list_random)
 
-        X=np.concatenate((X_open, X_grant, X_unlock, X_random), axis=0)
+        X=np.concatenate((X_open, X_grant, X_unlock), axis=0)
 
-        y=np.concatenate((y_open, y_grant, y_unlock, y_random), axis=0)
+        y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
 
         for l in range(1):
             Xt_open = X_open[:30]
@@ -194,10 +194,10 @@ class MyWindow(QMainWindow):
             Xs_unlock = X_unlock[30:]
             yt_unlock = y_unlock[:30]
             ys_unlock = y_unlock[30:]
-            Xt_random = X_random[:24]
-            Xs_random = X_random[24:]
-            yt_random = y_random[:24]
-            ys_random = y_random[24:]
+            # Xt_random = X_random[:24]
+            # Xs_random = X_random[24:]
+            # yt_random = y_random[:24]
+            # ys_random = y_random[24:]
 
             X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock), axis=0)
             X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock), axis=0)
@@ -213,24 +213,23 @@ class MyWindow(QMainWindow):
 
             # Predict on test set
             y_pred = classifier.predict(X_test)
-            self.ui.progressBar_13.setValue(30)
-            self.ui.progressBar_14.setValue(30)
-            self.ui.progressBar_15.setValue(30)
-            if y_pred[0] == 0:
-                self.ui.progressBar_13.setValue(similarity.randint(90,100))
+            probs = classifier.predict_proba(X_test)
+            self.ui.progressBar_13.setValue(int(probs[0][0]*100))
+            self.ui.progressBar_14.setValue(int(probs[0][1]*100))
+            self.ui.progressBar_15.setValue(int(probs[0][2]*100))
+            if y_pred[0] == 0 and probs[0][0] >= 0.5:
                 self.textLabel.setText("ACCESS GRANTED😁")
-            elif y_pred[0] == 1:
-                self.ui.progressBar_14.setValue(similarity.randint(90,100))
+                s = 1
+            elif y_pred[0] == 1 and probs[0][1] >= 0.5:
                 self.textLabel.setText("ACCESS GRANTED😁")
-            elif y_pred[0] == 2:
-                self.ui.progressBar_15.setValue(similarity.randint(90,100))
+                s = 1
+            elif y_pred[0] == 2 and probs[0][2] >= 0.7:
                 self.textLabel.setText("ACCESS GRANTED😁")
-            # elif y_pred[0] == 3:
-            #     self.ui.progressBar_13.setValue(similarity.randint(0,60))
-            #     self.ui.progressBar_14.setValue(similarity.randint(0,60))
-            #     self.ui.progressBar_15.setValue(similarity.randint(0,60))
-            #     self.textLabel.setText("ACCESS DENIED😢")
-            return y_pred[0]
+                s = 1
+            else:
+                self.textLabel.setText("ACCESS DENIED😢")
+                s = 0
+            return s
 
     def recognizeSpeaker(self):
         AUDIO_FILE_PATH = 'Audio Files'
@@ -348,7 +347,7 @@ class MyWindow(QMainWindow):
                     max = sim
                     person = i
         temp = self.recognizeSentence()
-        if self.checkBoxes[person-1].isChecked() == True and temp != 3:
+        if self.checkBoxes[person-1].isChecked() == True and temp == 1:
             self.textLabel.setText("ACCESS GRANTED😁")
         else:
             self.textLabel.setText("ACCESS DENIED😢")
