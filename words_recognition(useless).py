@@ -4,21 +4,21 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.metrics.pairwise import cosine_similarity
+import sklearn.metrics as metrics
 import os
-import librosa
-import numpy as np
+import difflib
 
 
-###Made By: Nour Aldeen Hassan Khalaf
-###And Youssef Mohamed Abdelnaby Darwish
-#######funcion for loading the voice recordes
 def extract_features_labels(file_path,labelnum):
+    
     feature = []
     label = []
-    for filename in os.listdir(directory_path):
-        if filename.endswith(".wav"):  # Assuming audio files are in WAV format
-            file_path = os.path.join(directory_path, filename)
-            
+    for i in range(15):
+        # Assuming audio files are in WAV format
+           
+            file_name = f"{i}.wav"
+            file_path = os.path.join(directory_path, file_name)
             # Load the audio file using librosa
             audio_signal, sample_rate = librosa.load(file_path)
             
@@ -68,10 +68,6 @@ feature_list_yameen ,label_list_yameen =extract_features_labels(directory_path,3
 X_yameen = np.array(feature_list_yameen) 
 y_yameen = np.array(label_list_yameen) 
 
-###Made By: Nour Aldeen Hassan Khalaf
-###And Youssef Mohamed Abdelnaby Darwish
-
-####combining vectors ahhhhhh akt4ft en el mafrod wa7d
 X=np.concatenate((X_yasar, X_qif, X_taharak, X_yameen), axis=0)
 
 y=np.concatenate((y_yasar, y_qif, y_taharak, y_yameen), axis=0)
@@ -80,12 +76,23 @@ SumLAcuracy=0
 sumRAcuracy=0
 sumQAcuracy=0
 sumTAcuracy=0
-for iteration in range(10):
-# Split data into train and test sets
-    Xt_yasar, Xs_yasar, yt_yasar, ys_yasar = train_test_split(X_yasar, y_yasar, test_size=0.33)
-    Xt_qif, Xs_qif, yt_qif, ys_qif = train_test_split(X_qif, y_qif, test_size=0.33)
-    Xt_taharak, Xs_taharak, yt_taharak, ys_taharak = train_test_split(X_taharak, y_taharak, test_size=0.33)
-    Xt_yameen, Xs_yameen, yt_yameen, ys_yameen = train_test_split(X_yameen, y_yameen, test_size=0.33)
+for iteration in range(1):
+    Xt_yasar = X_yasar[:10]
+    Xs_yasar = X_yasar[10:]
+    yt_yasar = y_yasar[:10]
+    ys_yasar = y_yasar[10:]
+    Xt_qif = X_qif[:10]
+    Xs_qif = X_qif[10:]
+    yt_qif = y_qif[:10]
+    ys_qif = y_qif[10:]
+    Xt_taharak = X_taharak[:10]
+    Xs_taharak = X_taharak[10:]
+    yt_taharak = y_taharak[:10]
+    ys_taharak = y_taharak[10:]
+    Xt_yameen = X_yameen[:10]
+    Xs_yameen = X_yameen[10:]
+    yt_yameen = y_yameen[:10]
+    ys_yameen = y_yameen[10:]
 
     X_train=np.concatenate((Xt_yasar, Xt_qif, Xt_taharak, Xt_yameen), axis=0)
     X_test=np.concatenate((Xs_yasar, Xs_qif, Xs_taharak, Xs_yameen), axis=0)
@@ -133,6 +140,9 @@ for iteration in range(10):
 
     ###ovar all accuracy
     accuracy = accuracy_score(y_test, y_pred)
+
+
+    print (cosine_similarity(X_test[1].reshape(1,-1),X_train[1].reshape(1,-1)))
     #######adding current results for total
     sumoverallAcuracy+=accuracy
     SumLAcuracy+=l_per
@@ -162,7 +172,3 @@ print("taharak = ",(sumTAcuracy/10)*100,"%")
 print("------------------------------------------")
 print("OverAll Accuracy = ", (sumoverallAcuracy/10)*100,"%")
 print("------------------------------------------")
-print("Made By: Nour Aldeen Hassan Khalaf ")
-print("And Youssef Mohamed Abdelnaby Darwish ")
-###Made By: Nour Aldeen Hassan Khalaf
-###And Youssef Mohamed Abdelnaby Darwish
