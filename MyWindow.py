@@ -13,7 +13,11 @@ import threading
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from Voice import *
-import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics.pairwise import cosine_similarity
+import sklearn.metrics as metrics
 import librosa
 
 class MyWindow(QMainWindow):
@@ -28,7 +32,7 @@ class MyWindow(QMainWindow):
         self.isRecording = False
         self.textLabel = self.ui.label_2
         self.sampleVoice = Voice(False)
-         # Create Matplotlib figure and axes
+        # Create Matplotlib figure and axes
         self.matplotlib_figure, self.matplotlib_axes = plt.subplots()
         self.matplotlib_axes.set_axis_off()  # Turn off axes for spectrogram
         # Create Matplotlib widget to embed in PyQT layout
@@ -37,9 +41,10 @@ class MyWindow(QMainWindow):
         self.matplotlib_figure.patch.set_facecolor('white')
         self.ui.frame_19.layout().addWidget(self.matplotlib_widget)
 
+        self.checkBoxes = [self.ui.checkBox,self.ui.checkBox_2,self.ui.checkBox_3,self.ui.checkBox_4,self.ui.checkBox_5,self.ui.checkBox_6,self.ui.checkBox_7,self.ui.checkBox_8]
         self.database = {"Person1": [],"Person2": [],"Person3": [],"Person4": [],"Person5": [],"Person6": [],"Person7": [],"Person8": []}
-        for i in range(8):
-            self.database[f"Person{i+1}"].append({"Open": Voice(True),"Unlock": Voice(True),"Grant": Voice(True)})
+        # for i in range(8):
+        #     self.database[f"Person{i+1}"].append({"Open": Voice(True),"Unlock": Voice(True),"Grant": Voice(True)})
         self.mode = 1
 
     def setMode(self):
@@ -107,22 +112,131 @@ class MyWindow(QMainWindow):
 
     def Comparison(self):
         if self.mode == 1:
-            self.recognizerSentence()
+            self.recognizeSentence()
         elif self.mode == 2:
             self.recognizeSpeaker()
 
+    def recognizeSentence(self):
+        def extract_features_labels(labelnum,sentence,filename=None,number=10):
+            speakers = [1,2,3]
+            feature = []
+            label = []
+            directory_path = 'Audio Files'
+            for speaker in speakers:
+                for i in range(1,number+1):
+                    # Assuming audio files are in WAV format
+                    
+                    file_name = f"{speaker}/{sentence}{i}.wav"
+                    file_path = os.path.join(directory_path, file_name)
+                    # Load the audio file using librosa
+                    audio_signal, sample_rate = librosa.load(file_path)
+                    
+                    # Extract MFCCs from the audio signal
+                    mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=13)
 
+                    # Compute the mean of MFCCs as features
+                    mfccs_mean = np.mean(mfccs, axis=1)
+                    
+                    # Append MFCCs and associated label (if available) to lists
+                    feature.append(mfccs_mean)
+                    
+                    # Include logic to add associated labels if available (e.g., sentiment labels)
+                    label.append(labelnum)
+                    # label_list.append(label)
+                    # Replace 'label' with the actual labels from your dataset
+                    
+                    # label_list.append(label)
+                    # Replace 'label' with the actual labels from your dataset
+            if filename != None:
+                file_name = filename
+                audio_signal, sample_rate = librosa.load(file_name)
+                mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=13)
+                mfccs_mean = np.mean(mfccs, axis=1)
+                feature.append(mfccs_mean)
+                label.append(labelnum)
+            return feature,label
+
+
+        feature_list_open ,label_list_open =extract_features_labels(0,"open middle door ")
+        X_open = np.array(feature_list_open)
+        y_open = np.array(label_list_open)
+
+
+        feature_list_grant ,label_list_grant =extract_features_labels(1,"grant me access ")
+        X_grant = np.array(feature_list_grant)
+        y_grant = np.array(label_list_grant)
+        
+
+        feature_list_unlock ,label_list_unlock =extract_features_labels(2,"unlock the gate ",self.sampleVoice.path)
+        X_unlock = np.array(feature_list_unlock)
+        y_unlock = np.array(label_list_unlock)
+
+
+        # ########yameen-right-R-3
+        # directory_path = 'R'
+        # feature_list_yameen ,label_list_yameen =extract_features_labels(directory_path,3)
+        # X_yameen = np.array(feature_list_yameen) 
+        # y_yameen = np.array(label_list_yameen) 
+
+        ###Made By: Nour Aldeen Hassan Khalaf
+        ###And Youssef Mohamed Abdelnaby Darwish
+
+        ####combining vectors ahhhhhh akt4ft en el mafrod wa7d
+        X=np.concatenate((X_open, X_grant, X_unlock), axis=0)
+
+        y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
+        sumoverallAcuracy=0
+        SumLAcuracy=0
+        sumRAcuracy=0
+        sumQAcuracy=0
+        sumTAcuracy=0
+        for iteration in range(1):
+            Xt_open = X_open[:30]
+            Xs_open = X_open[30:]
+            yt_open = y_open[:30]
+            ys_open = y_open[30:]
+            Xt_grant = X_grant[:30]
+            Xs_grant = X_grant[30:]
+            yt_grant = y_grant[:30]
+            ys_grant = y_grant[30:]
+            Xt_unlock = X_unlock[:30]
+            Xs_unlock = X_unlock[30:]
+            yt_unlock = y_unlock[:30]
+            ys_unlock = y_unlock[30:]
+
+            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock), axis=0)
+            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock), axis=0)
+            y_train=np.concatenate((yt_open, yt_grant, yt_unlock), axis=0)
+            y_test=np.concatenate((ys_open, ys_grant, ys_unlock), axis=0)
+
+
+
+            # Train a classifier (Random Forest as an example)
+            classifier = RandomForestClassifier(n_estimators=1000, random_state=42)
+            classifier.fit(X_train, y_train)
+
+            # Predict on test set
+            y_pred = classifier.predict(X_test)
+            self.ui.progressBar_13.setValue(0)
+            self.ui.progressBar_14.setValue(0)
+            self.ui.progressBar_15.setValue(0)
+            if y_pred[0] == 0:
+                self.ui.progressBar_13.setValue(100)
+            elif y_pred[0] == 1:
+                self.ui.progressBar_14.setValue(100)
+            elif y_pred[0] == 2:
+                self.ui.progressBar_15.setValue(100)
 
     def recognizeSpeaker(self):
         AUDIO_FILE_PATH = 'Audio Files'
         # A dictionary which stores dominant frequency values for each speaker
         # The keys are student codes
         # ALL Dominant frequency values for each student
-        dom_freq_vals = {1: [], 2: [], 3: []}
+        dom_freq_vals = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
         # Dictionary that stores the avg feature vector for each speaker in the traininig phase (10)
-        feat_vector = {1: 0, 2: 0, 3: 0}
+        feat_vector = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
         # Dictionary that stores the 5 feature vectors for each speaker in the testing phase
-        feat_vector_test = {1: [], 2: [], 3: []}
+        feat_vector_test = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
         # list of all test vectors for all speakers
         test_vector_list = []
         
@@ -178,44 +292,61 @@ class MyWindow(QMainWindow):
         Training(1,1)
         Training(2,1)
         Training(3,1)
+        Training(4,1)
+        Training(5,1)
+        Training(6,1)
         Training(2,2,1,self.sampleVoice.path)
         # list of avg feature vectors (training)
         feat_vector_list = [feat_vector[val] for val in feat_vector]
-
-        closest_match_vals = {1: [], 2: [], 3: []}
+        print (feat_vector_list)
         # Loop over the avg test vectors toget the closest matching indices
         max = 0
         for index, test in enumerate(test_vector_list):
-            closest_value = min(feat_vector_list, key=lambda x: abs(x - test))
-            closest_index = feat_vector_list.index(closest_value)
-            # Check if there has already been a match
-            sim1 = round((1-(abs(test-feat_vector[1]))/feat_vector[1])*100,2)
-            print(f"For test {index + 1} the recognized student was Person 1\nSimilarity = {sim1}%")
-            self.ui.progressBar_16.setValue(int(sim1))
-            closest_match_vals[1].append(sim1)
-            if sim1 > max:
-                max = sim1
-                person = "Person 1"
+            # # Check if there has already been a match
+            # sim1 = round((1-(abs(test-feat_vector[1]))/abs(feat_vector[1]))*100,2)
+            # print(f"For test {index + 1} the recognized student was Person 1\nSimilarity = {sim1}%")
+            # self.ui.progressBar_16.setValue(int(sim1))
+            # if sim1 > max:
+            #     max = sim1
+            #     person = 1
 
-            sim2 = round((1-(abs(test-feat_vector[2]))/feat_vector[2])*100,2)
-            print(f"For test {index + 1} the recognized student was Person 2\nSimilarity = {sim2}%")
-            self.ui.progressBar_17.setValue(int(sim2))
-            closest_match_vals[2].append(sim2)
-            if sim2 > max:
-                max = sim2
-                person = "Person 2"
+            # sim2 = round((1-(abs(test-feat_vector[2]))/abs(feat_vector[2]))*100,2)
+            # print(f"For test {index + 1} the recognized student was Person 2\nSimilarity = {sim2}%")
+            # self.ui.progressBar_17.setValue(int(sim2))
+            # if sim2 > max:
+            #     max = sim2
+            #     person = 2
 
-            sim3 = round((1-(abs(test-feat_vector[3]))/feat_vector[3])*100,2)
-            if sim3 < 0:
-                sim3 = 3
-            print(f"For test {index + 1} the recognized student was Person 3\nSimilarity = {sim3}%")
-            self.ui.progressBar_18.setValue(int(sim3))
-            closest_match_vals[3].append(sim3)
-            if sim3 > max:
-                max = sim3
-                person = "Person 3"
+            # sim3 = round((1-(abs(test-feat_vector[3]))/abs(feat_vector[3]))*100,2)
+            # if sim3 < 0:
+            #     sim3 = 3
+            # print(f"For test {index + 1} the recognized student was Person 3\nSimilarity = {sim3}%")
+            # self.ui.progressBar_18.setValue(int(sim3))
+            # if sim3 > max:
+            #     max = sim3
+            #     person = 3
 
-        if self.ui.comboBox.currentText() == person:
+            # sim4 = round((1-(abs(test-feat_vector[4]))/abs(feat_vector[4]))*100,2)
+            # if sim3 < 0:
+            #     sim3 = 3
+            # print(f"For test {index + 1} the recognized student was Person 3\nSimilarity = {sim3}%")
+            # self.ui.progressBar_18.setValue(int(sim3))
+            # if sim3 > max:
+            #     max = sim3
+            #     person = 3
+
+            progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21]
+            for i,progress in zip(range(1,7),progressBars):
+                sim = round((1-(abs(test-feat_vector[i]))/abs(feat_vector[i]))*100,2)
+                if sim < 0:
+                    sim = 3
+                print(f"For test 1 the recognized student was Person {i}\nSimilarity = {sim}%")
+                progress.setValue(int(sim))
+                if sim > max:
+                    max = sim
+                    person = i
+
+        if self.checkBoxes[person-1].isChecked() == True:
             self.textLabel.setText("ACESS GRANTED😁")
         else:
             self.textLabel.setText("ACESS DENIED😢")
