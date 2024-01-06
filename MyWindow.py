@@ -164,12 +164,12 @@ class MyWindow(QMainWindow):
         y_open = np.array(label_list_open)
 
 
-        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ")
+        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ",self.sampleVoice.path)
         X_grant = np.array(feature_list_grant)
         y_grant = np.array(label_list_grant)
         
 
-        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ",self.sampleVoice.path)
+        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ")
         X_unlock = np.array(feature_list_unlock)
         y_unlock = np.array(label_list_unlock)
 
@@ -199,10 +199,10 @@ class MyWindow(QMainWindow):
             yt_random = y_random[:24]
             ys_random = y_random[24:]
 
-            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock, Xt_random), axis=0)
-            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock, Xs_random), axis=0)
-            y_train=np.concatenate((yt_open, yt_grant, yt_unlock, yt_random), axis=0)
-            y_test=np.concatenate((ys_open, ys_grant, ys_unlock, ys_random), axis=0)
+            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock), axis=0)
+            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock), axis=0)
+            y_train=np.concatenate((yt_open, yt_grant, yt_unlock), axis=0)
+            y_test=np.concatenate((ys_open, ys_grant, ys_unlock), axis=0)
 
 
 
@@ -225,11 +225,11 @@ class MyWindow(QMainWindow):
             elif y_pred[0] == 2:
                 self.ui.progressBar_15.setValue(similarity.randint(90,100))
                 self.textLabel.setText("ACCESS GRANTED😁")
-            elif y_pred[0] == 3:
-                self.ui.progressBar_13.setValue(similarity.randint(0,60))
-                self.ui.progressBar_14.setValue(similarity.randint(0,60))
-                self.ui.progressBar_15.setValue(similarity.randint(0,60))
-                self.textLabel.setText("ACCESS DENIED😢")
+            # elif y_pred[0] == 3:
+            #     self.ui.progressBar_13.setValue(similarity.randint(0,60))
+            #     self.ui.progressBar_14.setValue(similarity.randint(0,60))
+            #     self.ui.progressBar_15.setValue(similarity.randint(0,60))
+            #     self.textLabel.setText("ACCESS DENIED😢")
             return y_pred[0]
 
     def recognizeSpeaker(self):
