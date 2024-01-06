@@ -164,12 +164,12 @@ class MyWindow(QMainWindow):
         y_open = np.array(label_list_open)
 
 
-        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ")
+        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ",self.sampleVoice.path)
         X_grant = np.array(feature_list_grant)
         y_grant = np.array(label_list_grant)
         
 
-        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ",self.sampleVoice.path)
+        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ")
         X_unlock = np.array(feature_list_unlock)
         y_unlock = np.array(label_list_unlock)
 
