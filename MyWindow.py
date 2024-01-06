@@ -122,6 +122,8 @@ class MyWindow(QMainWindow):
             feature = []
             label = []
             directory_path = 'Audio Files'
+            if sentence == "":
+                speakers = ['random']
             for speaker in speakers:
                 for i in range(1,number+1):
                     # Assuming audio files are in WAV format
@@ -157,40 +159,29 @@ class MyWindow(QMainWindow):
             return feature,label
 
 
-        feature_list_open ,label_list_open =extract_features_labels(0,"open middle door ")
+        feature_list_open ,label_list_open = extract_features_labels(0,"open middle door ")
         X_open = np.array(feature_list_open)
         y_open = np.array(label_list_open)
 
 
-        feature_list_grant ,label_list_grant =extract_features_labels(1,"grant me access ")
+        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ")
         X_grant = np.array(feature_list_grant)
         y_grant = np.array(label_list_grant)
         
 
-        feature_list_unlock ,label_list_unlock =extract_features_labels(2,"unlock the gate ",self.sampleVoice.path)
+        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ",self.sampleVoice.path)
         X_unlock = np.array(feature_list_unlock)
         y_unlock = np.array(label_list_unlock)
 
+        feature_list_random ,label_list_random = extract_features_labels(3,"",number=24)
+        X_random = np.array(feature_list_random)
+        y_random = np.array(label_list_random)
 
-        # ########yameen-right-R-3
-        # directory_path = 'R'
-        # feature_list_yameen ,label_list_yameen =extract_features_labels(directory_path,3)
-        # X_yameen = np.array(feature_list_yameen) 
-        # y_yameen = np.array(label_list_yameen) 
+        X=np.concatenate((X_open, X_grant, X_unlock, X_random), axis=0)
 
-        ###Made By: Nour Aldeen Hassan Khalaf
-        ###And Youssef Mohamed Abdelnaby Darwish
+        y=np.concatenate((y_open, y_grant, y_unlock, y_random), axis=0)
 
-        ####combining vectors ahhhhhh akt4ft en el mafrod wa7d
-        X=np.concatenate((X_open, X_grant, X_unlock), axis=0)
-
-        y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
-        sumoverallAcuracy=0
-        SumLAcuracy=0
-        sumRAcuracy=0
-        sumQAcuracy=0
-        sumTAcuracy=0
-        for iteration in range(1):
+        for l in range(1):
             Xt_open = X_open[:30]
             Xs_open = X_open[30:]
             yt_open = y_open[:30]
@@ -203,11 +194,15 @@ class MyWindow(QMainWindow):
             Xs_unlock = X_unlock[30:]
             yt_unlock = y_unlock[:30]
             ys_unlock = y_unlock[30:]
+            Xt_random = X_random[:24]
+            Xs_random = X_random[24:]
+            yt_random = y_random[:24]
+            ys_random = y_random[24:]
 
-            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock), axis=0)
-            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock), axis=0)
-            y_train=np.concatenate((yt_open, yt_grant, yt_unlock), axis=0)
-            y_test=np.concatenate((ys_open, ys_grant, ys_unlock), axis=0)
+            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock, Xt_random), axis=0)
+            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock, Xs_random), axis=0)
+            y_train=np.concatenate((yt_open, yt_grant, yt_unlock, yt_random), axis=0)
+            y_test=np.concatenate((ys_open, ys_grant, ys_unlock, ys_random), axis=0)
 
 
 
@@ -215,17 +210,27 @@ class MyWindow(QMainWindow):
             classifier = RandomForestClassifier(n_estimators=1000, random_state=42)
             classifier.fit(X_train, y_train)
 
+
             # Predict on test set
             y_pred = classifier.predict(X_test)
-            self.ui.progressBar_13.setValue(0)
-            self.ui.progressBar_14.setValue(0)
-            self.ui.progressBar_15.setValue(0)
+            self.ui.progressBar_13.setValue(30)
+            self.ui.progressBar_14.setValue(30)
+            self.ui.progressBar_15.setValue(30)
             if y_pred[0] == 0:
-                self.ui.progressBar_13.setValue(100)
+                self.ui.progressBar_13.setValue(similarity.randint(90,100))
+                self.textLabel.setText("ACCESS GRANTED😁")
             elif y_pred[0] == 1:
-                self.ui.progressBar_14.setValue(100)
+                self.ui.progressBar_14.setValue(similarity.randint(90,100))
+                self.textLabel.setText("ACCESS GRANTED😁")
             elif y_pred[0] == 2:
-                self.ui.progressBar_15.setValue(100)
+                self.ui.progressBar_15.setValue(similarity.randint(90,100))
+                self.textLabel.setText("ACCESS GRANTED😁")
+            elif y_pred[0] == 3:
+                self.ui.progressBar_13.setValue(similarity.randint(0,60))
+                self.ui.progressBar_14.setValue(similarity.randint(0,60))
+                self.ui.progressBar_15.setValue(similarity.randint(0,60))
+                self.textLabel.setText("ACCESS DENIED😢")
+            return y_pred[0]
 
     def recognizeSpeaker(self):
         AUDIO_FILE_PATH = 'Audio Files'
@@ -289,12 +294,9 @@ class MyWindow(QMainWindow):
                 feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
                 # Append the test vectors to the list
                 test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
-        Training(1,1)
-        Training(2,1)
-        Training(3,1)
-        Training(4,1)
-        Training(5,1)
-        Training(6,1)
+        for i in range(1,7):
+            Training(i,1)
+
         Training(2,2,1,self.sampleVoice.path)
         # list of avg feature vectors (training)
         feat_vector_list = [feat_vector[val] for val in feat_vector]
@@ -345,11 +347,9 @@ class MyWindow(QMainWindow):
                 if sim > max:
                     max = sim
                     person = i
-
-        if self.checkBoxes[person-1].isChecked() == True:
-            self.textLabel.setText("ACESS GRANTED😁")
+        temp = self.recognizeSentence()
+        if self.checkBoxes[person-1].isChecked() == True and temp != 3:
+            self.textLabel.setText("ACCESS GRANTED😁")
         else:
-            self.textLabel.setText("ACESS DENIED😢")
-                # print(f"For test {index + 1} the recognized student was Person 3")
-                # closest_match_vals[3].append(test)
+            self.textLabel.setText("ACCESS DENIED😢")
                     

@@ -132,6 +132,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_5">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 1</string>
                         </property>
@@ -165,6 +170,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_6">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 2</string>
                         </property>
@@ -198,6 +208,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_7">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 3</string>
                         </property>
@@ -231,6 +246,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_11">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 4</string>
                         </property>
@@ -279,6 +299,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_8">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 5</string>
                         </property>
@@ -312,6 +337,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_9">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 6</string>
                         </property>
@@ -345,6 +375,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_10">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 7</string>
                         </property>
@@ -378,6 +413,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_12">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 8</string>
                         </property>
@@ -425,7 +465,7 @@
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>27</height>
+                 <height>40</height>
                 </size>
                </property>
                <property name="font">
@@ -470,6 +510,11 @@
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="layoutDirection">
                       <enum>Qt::LeftToRight</enum>
                      </property>
@@ -508,6 +553,11 @@
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Grant Me Access</string>
                      </property>
@@ -542,6 +592,11 @@
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
                      </property>
                      <property name="text">
                       <string>Unlock The Gate</string>
@@ -625,6 +680,11 @@
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <widget class="QRadioButton" name="radioButton">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Security Voice Words</string>
                </property>
@@ -635,6 +695,11 @@
              </item>
              <item>
               <widget class="QRadioButton" name="radioButton_2">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Security Voice Fingerpring</string>
                </property>

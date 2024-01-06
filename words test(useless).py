@@ -59,7 +59,7 @@ X_qif = np.array(feature_list_qif)
 y_qif = np.array(label_list_qif)
  
 
-feature_list_taharak ,label_list_taharak =extract_features_labels(2,"unlock the gate ","recording3.wav")
+feature_list_taharak ,label_list_taharak =extract_features_labels(2,"unlock the gate ","recording2.wav")
 X_taharak = np.array(feature_list_taharak)
 y_taharak = np.array(label_list_taharak)
 
