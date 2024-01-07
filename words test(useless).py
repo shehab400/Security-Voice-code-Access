@@ -10,7 +10,7 @@ import os
 
 
 def extract_features_labels(labelnum,sentence,filename=None,number=10):
-    speakers = [1,2,3]
+    speakers = [1]
     feature = []
     label = []
     directory_path = 'Audio Files'
@@ -59,7 +59,7 @@ X_qif = np.array(feature_list_qif)
 y_qif = np.array(label_list_qif)
  
 
-feature_list_taharak ,label_list_taharak =extract_features_labels(2,"unlock the gate ","recording3.wav")
+feature_list_taharak ,label_list_taharak =extract_features_labels(2,"unlock the gate ","recording2.wav")
 X_taharak = np.array(feature_list_taharak)
 y_taharak = np.array(label_list_taharak)
 
@@ -84,18 +84,18 @@ for iteration in range(1):
     # Xt_qif, Xs_qif, yt_qif, ys_qif = train_test_split(X_qif, y_qif, test_size=5)
     # Xt_taharak, Xs_taharak, yt_taharak, ys_taharak = train_test_split(X_taharak, y_taharak, test_size=5)
     # Xt_yameen, Xs_yameen, yt_yameen, ys_yameen = train_test_split(X_yameen, y_yameen, test_size=5)
-    Xt_yasar = X_yasar[:30]
-    Xs_yasar = X_yasar[30:]
-    yt_yasar = y_yasar[:30]
-    ys_yasar = y_yasar[30:]
-    Xt_qif = X_qif[:30]
-    Xs_qif = X_qif[30:]
-    yt_qif = y_qif[:30]
-    ys_qif = y_qif[30:]
-    Xt_taharak = X_taharak[:30]
-    Xs_taharak = X_taharak[30:]
-    yt_taharak = y_taharak[:30]
-    ys_taharak = y_taharak[30:]
+    Xt_yasar = X_yasar[:10]
+    Xs_yasar = X_yasar[10:]
+    yt_yasar = y_yasar[:10]
+    ys_yasar = y_yasar[10:]
+    Xt_qif = X_qif[:10]
+    Xs_qif = X_qif[10:]
+    yt_qif = y_qif[:10]
+    ys_qif = y_qif[10:]
+    Xt_taharak = X_taharak[:10]
+    Xs_taharak = X_taharak[10:]
+    yt_taharak = y_taharak[:10]
+    ys_taharak = y_taharak[10:]
 
     X_train=np.concatenate((Xt_yasar, Xt_qif, Xt_taharak), axis=0)
     X_test=np.concatenate((Xs_yasar, Xs_qif, Xs_taharak), axis=0)
@@ -105,10 +105,10 @@ for iteration in range(1):
 
 
     # Train a classifier (Random Forest as an example)
-    classifier = RandomForestClassifier(n_estimators=1000, random_state=42)
+    classifier = RandomForestClassifier(n_estimators=1000)
     classifier.fit(X_train, y_train)
 
     # Predict on test set
     y_pred = classifier.predict(X_test)
     print(y_pred)
-    print(classifier.predict_proba(X_test)[0][0])
+    print(classifier.predict_proba(X_test)[0])
