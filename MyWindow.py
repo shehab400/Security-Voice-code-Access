@@ -134,7 +134,7 @@ class MyWindow(QMainWindow):
                     audio_signal, sample_rate = librosa.load(file_path)
                     
                     # Extract MFCCs from the audio signal
-                    mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=13)
+                    mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=20)
 
                     # Compute the mean of MFCCs as features
                     mfccs_mean = np.mean(mfccs, axis=1)
@@ -152,7 +152,7 @@ class MyWindow(QMainWindow):
             if filename != None:
                 file_name = filename
                 audio_signal, sample_rate = librosa.load(file_name)
-                mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=13)
+                mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=20)
                 mfccs_mean = np.mean(mfccs, axis=1)
                 feature.append(mfccs_mean)
                 label.append(labelnum)
@@ -207,7 +207,7 @@ class MyWindow(QMainWindow):
 
 
             # Train a classifier (Random Forest as an example)
-            classifier = RandomForestClassifier(n_estimators = 2000, random_state=42)
+            classifier = RandomForestClassifier(n_estimators = 2000, random_state=1000)
             classifier.fit(X_train, y_train)
 
 
@@ -320,7 +320,7 @@ class MyWindow(QMainWindow):
         max = 0
         progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21]
         for index, test in enumerate(test_vector_list):
-
+            print(test)
             for i,progress in zip(range(1,7),progressBars):
                 sim = round((1-(abs(test-feat_vector[i]))/abs(feat_vector[i]))*100,2)
                 if sim < 0:
@@ -333,7 +333,7 @@ class MyWindow(QMainWindow):
         temp = self.recognizeSentence()
         if temp == 1:
             for check,progress in zip(self.checkBoxes,progressBars):
-                if check.isChecked() == True and progress.value() >= 90:
+                if check.isChecked() == True and progress.value() >= 85:
                     self.textLabel.setText("ACCESS GRANTED😁")
                     return
         self.textLabel.setText("ACCESS DENIED😢")
