@@ -118,7 +118,7 @@ class MyWindow(QMainWindow):
 
     def recognizeSentence(self):
         def extract_features_labels(labelnum,sentence,filename=None,number=10):
-            speakers = [1]
+            speakers = [1,7]
             feature = []
             label = []
             directory_path = 'Audio Files'
@@ -182,18 +182,18 @@ class MyWindow(QMainWindow):
         y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
 
         for l in range(1):
-            Xt_open = X_open[:10]
-            Xs_open = X_open[10:]
-            yt_open = y_open[:10]
-            ys_open = y_open[10:]
-            Xt_grant = X_grant[:10]
-            Xs_grant = X_grant[10:]
-            yt_grant = y_grant[:10]
-            ys_grant = y_grant[10:]
-            Xt_unlock = X_unlock[:10]
-            Xs_unlock = X_unlock[10:]
-            yt_unlock = y_unlock[:10]
-            ys_unlock = y_unlock[10:]
+            Xt_open = X_open[:20]
+            Xs_open = X_open[20:]
+            yt_open = y_open[:20]
+            ys_open = y_open[20:]
+            Xt_grant = X_grant[:20]
+            Xs_grant = X_grant[20:]
+            yt_grant = y_grant[:20]
+            ys_grant = y_grant[20:]
+            Xt_unlock = X_unlock[:20]
+            Xs_unlock = X_unlock[20:]
+            yt_unlock = y_unlock[:20]
+            ys_unlock = y_unlock[20:]
             # Xt_random = X_random[:24]
             # Xs_random = X_random[24:]
             # yt_random = y_random[:24]
@@ -236,11 +236,11 @@ class MyWindow(QMainWindow):
         # A dictionary which stores dominant frequency values for each speaker
         # The keys are student codes
         # ALL Dominant frequency values for each student
-        dom_freq_vals = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+        dom_freq_vals = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # Dictionary that stores the avg feature vector for each speaker in the traininig phase (10)
-        feat_vector = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+        feat_vector = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
         # Dictionary that stores the 5 feature vectors for each speaker in the testing phase
-        feat_vector_test = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+        feat_vector_test = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # list of all test vectors for all speakers
         test_vector_list = []
         
@@ -293,7 +293,7 @@ class MyWindow(QMainWindow):
                 feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
                 # Append the test vectors to the list
                 test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
-        for i in range(1,7):
+        for i in range(1,8):
             Training(i,1)
         
         a = np.array((feat_vector[1],feat_vector[2],feat_vector[3],feat_vector[4],feat_vector[5],feat_vector[6]))
@@ -318,10 +318,10 @@ class MyWindow(QMainWindow):
         print (feat_vector_list)
         # Loop over the avg test vectors toget the closest matching indices
         max = 0
-        progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21]
+        progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21,self.ui.progressBar_22]
         for index, test in enumerate(test_vector_list):
             print(test)
-            for i,progress in zip(range(1,7),progressBars):
+            for i,progress in zip(range(1,8),progressBars):
                 sim = round((1-(abs(test-feat_vector[i]))/abs(feat_vector[i]))*100,2)
                 if sim < 0:
                     sim = 3
@@ -333,7 +333,7 @@ class MyWindow(QMainWindow):
         temp = self.recognizeSentence()
         if temp == 1:
             for check,progress in zip(self.checkBoxes,progressBars):
-                if check.isChecked() == True and progress.value() >= 85:
+                if check.isChecked() == True and progress.value() >= 82:
                     self.textLabel.setText("ACCESS GRANTED😁")
                     return
         self.textLabel.setText("ACCESS DENIED😢")
