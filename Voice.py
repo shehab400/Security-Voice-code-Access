@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import spectrogram
 import audio2numpy as a2n
+import random as similarity
 
 class Voice:
     def __init__(self,IsDatabase,fs = 44100):

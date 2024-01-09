@@ -85,62 +85,12 @@
                  <pointsize>14</pointsize>
                 </font>
                </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
                <property name="text">
                 <string>Persons Matching</string>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="comboBox">
-               <item>
-                <property name="text">
-                 <string>Person 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 6</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 7</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Person 8</string>
-                </property>
-               </item>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
               </widget>
              </item>
              <item>
@@ -174,7 +124,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_3">
                       <item>
+                       <widget class="QCheckBox" name="checkBox">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_5">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 1</string>
                         </property>
@@ -200,7 +162,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_4">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_2">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_6">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 2</string>
                         </property>
@@ -226,7 +200,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_5">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_3">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_7">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 3</string>
                         </property>
@@ -252,7 +238,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_7">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_4">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_11">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 4</string>
                         </property>
@@ -293,7 +291,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_9">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_5">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_8">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 5</string>
                         </property>
@@ -319,7 +329,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_8">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_6">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_9">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 6</string>
                         </property>
@@ -345,7 +367,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_10">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_7">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_10">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 7</string>
                         </property>
@@ -371,7 +405,19 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_11">
                       <item>
+                       <widget class="QCheckBox" name="checkBox_8">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QLabel" name="label_12">
+                        <property name="font">
+                         <font>
+                          <bold>true</bold>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Person 8</string>
                         </property>
@@ -410,6 +456,18 @@
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
               <widget class="QLabel" name="label_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>40</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>14</pointsize>
@@ -417,6 +475,9 @@
                </property>
                <property name="text">
                 <string>Senctences Matching</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -443,8 +504,25 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_16">
                    <item>
                     <widget class="QLabel" name="label_17">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="layoutDirection">
+                      <enum>Qt::LeftToRight</enum>
+                     </property>
                      <property name="text">
                       <string>Open Middle Door</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
@@ -469,8 +547,22 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
                     <widget class="QLabel" name="label_18">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>Unlock The Gate</string>
+                      <string>Grant Me Access</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
@@ -495,8 +587,22 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_18">
                    <item>
                     <widget class="QLabel" name="label_19">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>Grant Me Access</string>
+                      <string>Unlock The Gate</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
@@ -574,6 +680,11 @@
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <widget class="QRadioButton" name="radioButton">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Security Voice Words</string>
                </property>
@@ -584,6 +695,11 @@
              </item>
              <item>
               <widget class="QRadioButton" name="radioButton_2">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Security Voice Fingerpring</string>
                </property>

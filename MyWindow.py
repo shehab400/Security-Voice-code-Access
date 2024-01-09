@@ -13,7 +13,11 @@ import threading
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from Voice import *
-import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics.pairwise import cosine_similarity
+import sklearn.metrics as metrics
 import librosa
 
 class MyWindow(QMainWindow):
@@ -28,7 +32,7 @@ class MyWindow(QMainWindow):
         self.isRecording = False
         self.textLabel = self.ui.label_2
         self.sampleVoice = Voice(False)
-         # Create Matplotlib figure and axes
+        # Create Matplotlib figure and axes
         self.matplotlib_figure, self.matplotlib_axes = plt.subplots()
         self.matplotlib_axes.set_axis_off()  # Turn off axes for spectrogram
         # Create Matplotlib widget to embed in PyQT layout
@@ -37,9 +41,10 @@ class MyWindow(QMainWindow):
         self.matplotlib_figure.patch.set_facecolor('white')
         self.ui.frame_19.layout().addWidget(self.matplotlib_widget)
 
+        self.checkBoxes = [self.ui.checkBox,self.ui.checkBox_2,self.ui.checkBox_3,self.ui.checkBox_4,self.ui.checkBox_5,self.ui.checkBox_6,self.ui.checkBox_7,self.ui.checkBox_8]
         self.database = {"Person1": [],"Person2": [],"Person3": [],"Person4": [],"Person5": [],"Person6": [],"Person7": [],"Person8": []}
-        for i in range(8):
-            self.database[f"Person{i+1}"].append({"Open": Voice(True),"Unlock": Voice(True),"Grant": Voice(True)})
+        # for i in range(8):
+        #     self.database[f"Person{i+1}"].append({"Open": Voice(True),"Unlock": Voice(True),"Grant": Voice(True)})
         self.mode = 1
 
     def setMode(self):
@@ -107,27 +112,142 @@ class MyWindow(QMainWindow):
 
     def Comparison(self):
         if self.mode == 1:
-            self.recognizerSentence()
+            self.recognizeSentence()
         elif self.mode == 2:
             self.recognizeSpeaker()
 
+    def recognizeSentence(self):
+        def extract_features_labels(labelnum,sentence,filename=None,number=10):
+            speakers = [1,7]
+            feature = []
+            label = []
+            directory_path = 'Audio Files'
+            # if sentence == "":
+            #     speakers = ['random']
+            for speaker in speakers:
+                for i in range(1,number+1):
+                    # Assuming audio files are in WAV format
+                    
+                    file_name = f"{speaker}/{sentence}{i}.wav"
+                    file_path = os.path.join(directory_path, file_name)
+                    # Load the audio file using librosa
+                    audio_signal, sample_rate = librosa.load(file_path)
+                    
+                    # Extract MFCCs from the audio signal
+                    mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=20)
 
+                    # Compute the mean of MFCCs as features
+                    mfccs_mean = np.mean(mfccs, axis=1)
+                    
+                    # Append MFCCs and associated label (if available) to lists
+                    feature.append(mfccs_mean)
+                    
+                    # Include logic to add associated labels if available (e.g., sentiment labels)
+                    label.append(labelnum)
+                    # label_list.append(label)
+                    # Replace 'label' with the actual labels from your dataset
+                    
+                    # label_list.append(label)
+                    # Replace 'label' with the actual labels from your dataset
+            if filename != None:
+                file_name = filename
+                audio_signal, sample_rate = librosa.load(file_name)
+                mfccs = librosa.feature.mfcc(y=audio_signal, sr=sample_rate, n_mfcc=20)
+                mfccs_mean = np.mean(mfccs, axis=1)
+                feature.append(mfccs_mean)
+                label.append(labelnum)
+            return feature,label
+
+
+        feature_list_open ,label_list_open = extract_features_labels(0,"open middle door ")
+        X_open = np.array(feature_list_open)
+        y_open = np.array(label_list_open)
+
+
+        feature_list_grant ,label_list_grant = extract_features_labels(1,"grant me access ",self.sampleVoice.path)
+        X_grant = np.array(feature_list_grant)
+        y_grant = np.array(label_list_grant)
+        
+
+        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ")
+        X_unlock = np.array(feature_list_unlock)
+        y_unlock = np.array(label_list_unlock)
+
+        # feature_list_random ,label_list_random = extract_features_labels(3,"",number=24)
+        # X_random = np.array(feature_list_random)
+        # y_random = np.array(label_list_random)
+
+        X=np.concatenate((X_open, X_grant, X_unlock), axis=0)
+
+        y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
+
+        for l in range(1):
+            Xt_open = X_open[:20]
+            Xs_open = X_open[20:]
+            yt_open = y_open[:20]
+            ys_open = y_open[20:]
+            Xt_grant = X_grant[:20]
+            Xs_grant = X_grant[20:]
+            yt_grant = y_grant[:20]
+            ys_grant = y_grant[20:]
+            Xt_unlock = X_unlock[:20]
+            Xs_unlock = X_unlock[20:]
+            yt_unlock = y_unlock[:20]
+            ys_unlock = y_unlock[20:]
+            # Xt_random = X_random[:24]
+            # Xs_random = X_random[24:]
+            # yt_random = y_random[:24]
+            # ys_random = y_random[24:]
+
+            X_train=np.concatenate((Xt_open, Xt_grant, Xt_unlock), axis=0)
+            X_test=np.concatenate((Xs_open, Xs_grant, Xs_unlock), axis=0)
+            y_train=np.concatenate((yt_open, yt_grant, yt_unlock), axis=0)
+            y_test=np.concatenate((ys_open, ys_grant, ys_unlock), axis=0)
+
+
+
+            # Train a classifier (Random Forest as an example)
+            classifier = RandomForestClassifier(n_estimators = 2000, random_state=1000)
+            classifier.fit(X_train, y_train)
+
+
+            # Predict on test set
+            y_pred = classifier.predict(X_test)
+            probs = classifier.predict_proba(X_test)
+            self.ui.progressBar_13.setValue(int(probs[0][0]*100))
+            self.ui.progressBar_14.setValue(int(probs[0][1]*100))
+            self.ui.progressBar_15.setValue(int(probs[0][2]*100))
+            if y_pred[0] == 0 and probs[0][0] >= 0.4:
+                self.textLabel.setText("ACCESS GRANTED😁")
+                s = 1
+            elif y_pred[0] == 1 and probs[0][1] >= 0.4:
+                self.textLabel.setText("ACCESS GRANTED😁")
+                s = 1
+            elif y_pred[0] == 2 and probs[0][2] >= 0.4:
+                self.textLabel.setText("ACCESS GRANTED😁")
+                s = 1
+            else:
+                self.textLabel.setText("ACCESS DENIED😢")
+                s = 0
+            return s
 
     def recognizeSpeaker(self):
-        AUDIO_FILE_PATH = 'C:/Users/dolla/OneDrive/Documents/GitHub/Security-Voice-code-Access/Audio Files'
+        AUDIO_FILE_PATH = 'Audio Files'
         # A dictionary which stores dominant frequency values for each speaker
         # The keys are student codes
         # ALL Dominant frequency values for each student
-        dom_freq_vals = {1: [], 2: [], 3: []}
+        dom_freq_vals = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # Dictionary that stores the avg feature vector for each speaker in the traininig phase (10)
-        feat_vector = {1: 0, 2: 0, 3: 0}
+        feat_vector = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
         # Dictionary that stores the 5 feature vectors for each speaker in the testing phase
-        feat_vector_test = {1: [], 2: [], 3: []}
+        feat_vector_test = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # list of all test vectors for all speakers
         test_vector_list = []
         
         def Training(speaker,flag,number=10,filename = None,trainingNum = 30):
             sentences = ["open middle door ","grant me access ","unlock the gate "]
+            if flag == 2:
+                sentences = [""]
             for sentence in sentences:
                 for i in range(1, number+1):
                     # Create a string which represents the file path
@@ -173,50 +293,47 @@ class MyWindow(QMainWindow):
                 feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
                 # Append the test vectors to the list
                 test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
-        Training(1,1)
-        Training(2,1)
-        Training(3,1)
+        for i in range(1,8):
+            Training(i,1)
+        
+        a = np.array((feat_vector[1],feat_vector[2],feat_vector[3],feat_vector[4],feat_vector[5],feat_vector[6]))
+        X_train = np.zeros([len(a),1])
+        for i in range(len(a)):
+            X_train[i][0] = a[i]
+        a = np.array((1,2,3,4,5,6))
+        y_train = np.zeros([len(a),1])
+        for i in range(len(a)):
+            y_train[i][0] = a[i]
+
         Training(2,2,1,self.sampleVoice.path)
+        
+        X_test = np.array([feat_vector_test[2]])
+        classifier = RandomForestClassifier(n_estimators= 2000, random_state= 42)
+        classifier.fit(X_train,y_train)
+        y_pred = classifier.predict(X_test)
+        print(classifier.predict_proba(X_test))
+
         # list of avg feature vectors (training)
         feat_vector_list = [feat_vector[val] for val in feat_vector]
-
-        closest_match_vals = {1: [], 2: [], 3: []}
+        print (feat_vector_list)
         # Loop over the avg test vectors toget the closest matching indices
         max = 0
+        progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21,self.ui.progressBar_22]
         for index, test in enumerate(test_vector_list):
-            closest_value = min(feat_vector_list, key=lambda x: abs(x - test))
-            closest_index = feat_vector_list.index(closest_value)
-            # Check if there has already been a match
-            sim1 = round((1-(abs(test-feat_vector[1]))/feat_vector[1])*100,2)
-            print(f"For test {index + 1} the recognized student was Person 1\nSimilarity = {sim1}%")
-            self.ui.progressBar_16.setValue(int(sim1))
-            closest_match_vals[1].append(sim1)
-            if sim1 > max:
-                max = sim1
-                person = "Person 1"
-
-            sim2 = round((1-(abs(test-feat_vector[2]))/feat_vector[2])*100,2)
-            print(f"For test {index + 1} the recognized student was Person 2\nSimilarity = {sim2}%")
-            self.ui.progressBar_17.setValue(int(sim2))
-            closest_match_vals[2].append(sim2)
-            if sim2 > max:
-                max = sim2
-                person = "Person 2"
-
-            sim3 = round((1-(abs(test-feat_vector[3]))/feat_vector[3])*100,2)
-            if sim3 < 0:
-                sim3 = 3
-            print(f"For test {index + 1} the recognized student was Person 3\nSimilarity = {sim3}%")
-            self.ui.progressBar_18.setValue(int(sim3))
-            closest_match_vals[3].append(sim3)
-            if sim3 > max:
-                max = sim3
-                person = "Person 3"
-
-        if self.ui.comboBox.currentText() == person:
-            self.textLabel.setText("ACESS GRANTED😁")
-        else:
-            self.textLabel.setText("ACESS DENIED😢")
-                # print(f"For test {index + 1} the recognized student was Person 3")
-                # closest_match_vals[3].append(test)
-                    
+            print(test)
+            for i,progress in zip(range(1,8),progressBars):
+                sim = round((1-(abs(test-feat_vector[i]))/abs(feat_vector[i]))*100,2)
+                if sim < 0:
+                    sim = 3
+                print(f"For test 1 the recognized student was Person {i}\nSimilarity = {sim}%")
+                progress.setValue(int(sim))
+                if sim > max:
+                    max = sim
+                    person = i
+        temp = self.recognizeSentence()
+        if temp == 1:
+            for check,progress in zip(self.checkBoxes,progressBars):
+                if check.isChecked() == True and progress.value() >= 82:
+                    self.textLabel.setText("ACCESS GRANTED😁")
+                    return
+        self.textLabel.setText("ACCESS DENIED😢")
