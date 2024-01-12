@@ -58,7 +58,7 @@ For developers interested in contributing or extending the functionality:
 - Follow the coding standards and contribute to the enhancement of features.
 - Create a pull request to submit changes.
 
-![Record Button](images/record_button.png)
+
 ## Acknowledgments
 
 ### Contributors
