@@ -54,7 +54,7 @@ To use the Security Voice-code Access application:
 
 For developers interested in contributing or extending the functionality:
 
-- The application is built using [programming language].
+- The application is built using [Python].
 - Follow the coding standards and contribute to the enhancement of features.
 - Create a pull request to submit changes.
 
