@@ -10,7 +10,7 @@ The Security Voice-code Access application is a security system designed to prov
 
 In this mode, access is granted only when a specific pass-code sentence is spoken. The valid passcode sentences are:
 1. "Open middle door"
-2. "Unlock My gate gate"
+2. "Unlock My gate "
 3. "Grant me access"
 
 Users can choose alternative sentences, ensuring no similarity among the selected phrases.
