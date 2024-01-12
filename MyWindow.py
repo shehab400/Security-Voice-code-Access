@@ -118,7 +118,7 @@ class MyWindow(QMainWindow):
 
     def recognizeSentence(self):
         def extract_features_labels(labelnum,sentence,filename=None,number=10):
-            speakers = [1,7]
+            speakers = [1,2,3]
             feature = []
             label = []
             directory_path = 'Audio Files'
@@ -169,7 +169,7 @@ class MyWindow(QMainWindow):
         y_grant = np.array(label_list_grant)
         
 
-        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock the gate ")
+        feature_list_unlock ,label_list_unlock = extract_features_labels(2,"unlock my gate ")
         X_unlock = np.array(feature_list_unlock)
         y_unlock = np.array(label_list_unlock)
 
@@ -182,18 +182,18 @@ class MyWindow(QMainWindow):
         y=np.concatenate((y_open, y_grant, y_unlock), axis=0)
 
         for l in range(1):
-            Xt_open = X_open[:20]
-            Xs_open = X_open[20:]
-            yt_open = y_open[:20]
-            ys_open = y_open[20:]
-            Xt_grant = X_grant[:20]
-            Xs_grant = X_grant[20:]
-            yt_grant = y_grant[:20]
-            ys_grant = y_grant[20:]
-            Xt_unlock = X_unlock[:20]
-            Xs_unlock = X_unlock[20:]
-            yt_unlock = y_unlock[:20]
-            ys_unlock = y_unlock[20:]
+            Xt_open = X_open[:30]
+            Xs_open = X_open[30:]
+            yt_open = y_open[:30]
+            ys_open = y_open[30:]
+            Xt_grant = X_grant[:30]
+            Xs_grant = X_grant[30:]
+            yt_grant = y_grant[:30]
+            ys_grant = y_grant[30:]
+            Xt_unlock = X_unlock[:30]
+            Xs_unlock = X_unlock[30:]
+            yt_unlock = y_unlock[:30]
+            ys_unlock = y_unlock[30:]
             # Xt_random = X_random[:24]
             # Xs_random = X_random[24:]
             # yt_random = y_random[:24]
@@ -218,16 +218,20 @@ class MyWindow(QMainWindow):
             self.ui.progressBar_14.setValue(int(probs[0][1]*100))
             self.ui.progressBar_15.setValue(int(probs[0][2]*100))
             if y_pred[0] == 0 and probs[0][0] >= 0.4:
-                self.textLabel.setText("ACCESS GRANTED😁")
+                if self.mode == 1:
+                    self.textLabel.setText("ACCESS GRANTED😁")
                 s = 1
             elif y_pred[0] == 1 and probs[0][1] >= 0.4:
-                self.textLabel.setText("ACCESS GRANTED😁")
-                s = 1
+                if self.mode == 1:
+                    self.textLabel.setText("ACCESS GRANTED😁")
+                s = 2
             elif y_pred[0] == 2 and probs[0][2] >= 0.4:
-                self.textLabel.setText("ACCESS GRANTED😁")
-                s = 1
+                if self.mode == 1:
+                    self.textLabel.setText("ACCESS GRANTED😁")
+                s = 3
             else:
-                self.textLabel.setText("ACCESS DENIED😢")
+                if self.mode == 1:
+                    self.textLabel.setText("ACCESS DENIED😢")
                 s = 0
             return s
 
@@ -238,17 +242,18 @@ class MyWindow(QMainWindow):
         # ALL Dominant frequency values for each student
         dom_freq_vals = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # Dictionary that stores the avg feature vector for each speaker in the traininig phase (10)
-        feat_vector = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
+        feat_vector = {1: [0,0,0], 2: [0,0,0], 3: [0,0,0], 4: [0,0,0], 5: [0,0,0], 6: [0,0,0], 7: [0,0,0]}
         # Dictionary that stores the 5 feature vectors for each speaker in the testing phase
         feat_vector_test = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []}
         # list of all test vectors for all speakers
         test_vector_list = []
+        temp = self.recognizeSentence()
         
         def Training(speaker,flag,number=10,filename = None,trainingNum = 30):
-            sentences = ["open middle door ","grant me access ","unlock the gate "]
+            sentences = ["open middle door ","grant me access ","unlock my gate "]
             if flag == 2:
                 sentences = [""]
-            for sentence in sentences:
+            for sentence,j in zip(sentences,range(3)):
                 for i in range(1, number+1):
                     # Create a string which represents the file path
                     path = os.path.join(AUDIO_FILE_PATH,str(speaker))
@@ -286,52 +291,53 @@ class MyWindow(QMainWindow):
             # Get the average feature vector for the speaker
             # Use only the first 10 values to get calculate feature vector (training)
             # round to 4 significant digits
-            if flag == 1:
-                feat_vector[speaker] = round(np.average(dom_freq_vals[speaker][:trainingNum]), 4)
-            elif flag == 2:
-                # Get the features for the test vectors (last 5 values)
-                feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
-                # Append the test vectors to the list
-                test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
+                if flag == 1:
+                    feat_vector[speaker][j] = round(np.average(dom_freq_vals[speaker][j*10:j*10+10]), 4)
+                elif flag == 2:
+                    # Get the features for the test vectors (last 5 values)
+                    feat_vector_test[speaker] = dom_freq_vals[speaker][trainingNum:]
+                    # Append the test vectors to the list
+                    test_vector_list.extend(dom_freq_vals[speaker][trainingNum:])
+
+
         for i in range(1,8):
             Training(i,1)
         
-        a = np.array((feat_vector[1],feat_vector[2],feat_vector[3],feat_vector[4],feat_vector[5],feat_vector[6]))
-        X_train = np.zeros([len(a),1])
-        for i in range(len(a)):
-            X_train[i][0] = a[i]
-        a = np.array((1,2,3,4,5,6))
-        y_train = np.zeros([len(a),1])
-        for i in range(len(a)):
-            y_train[i][0] = a[i]
+        # a = np.array((feat_vector[1],feat_vector[2],feat_vector[3],feat_vector[4],feat_vector[5],feat_vector[6]))
+        # X_train = np.zeros([len(a),1])
+        # for i in range(len(a)):
+        #     X_train[i][0] = a[i]
+        # a = np.array((1,2,3,4,5,6))
+        # y_train = np.zeros([len(a),1])
+        # for i in range(len(a)):
+        #     y_train[i][0] = a[i]
 
         Training(2,2,1,self.sampleVoice.path)
         
-        X_test = np.array([feat_vector_test[2]])
-        classifier = RandomForestClassifier(n_estimators= 2000, random_state= 42)
-        classifier.fit(X_train,y_train)
-        y_pred = classifier.predict(X_test)
-        print(classifier.predict_proba(X_test))
+        # X_test = np.array([feat_vector_test[2]])
+        # classifier = RandomForestClassifier(n_estimators= 2000, random_state= 42)
+        # classifier.fit(X_train,y_train)
+        # y_pred = classifier.predict(X_test)
+        # print(classifier.predict_proba(X_test))
 
         # list of avg feature vectors (training)
         feat_vector_list = [feat_vector[val] for val in feat_vector]
         print (feat_vector_list)
         # Loop over the avg test vectors toget the closest matching indices
-        max = 0
+        # max = 0
         progressBars = [self.ui.progressBar_16,self.ui.progressBar_17,self.ui.progressBar_18,self.ui.progressBar,self.ui.progressBar_20,self.ui.progressBar_21,self.ui.progressBar_22]
         for index, test in enumerate(test_vector_list):
             print(test)
             for i,progress in zip(range(1,8),progressBars):
-                sim = round((1-(abs(test-feat_vector[i]))/abs(feat_vector[i]))*100,2)
+                sim = round((1-(abs(test-feat_vector[i][temp-1]))/abs(feat_vector[i][temp-1]))*100,2)
                 if sim < 0:
                     sim = 3
                 print(f"For test 1 the recognized student was Person {i}\nSimilarity = {sim}%")
                 progress.setValue(int(sim))
-                if sim > max:
-                    max = sim
-                    person = i
-        temp = self.recognizeSentence()
-        if temp == 1:
+                # if sim > max:
+                #     max = sim
+                #     person = i
+        if temp != 0:
             for check,progress in zip(self.checkBoxes,progressBars):
                 if check.isChecked() == True and progress.value() >= 82:
                     self.textLabel.setText("ACCESS GRANTED😁")
