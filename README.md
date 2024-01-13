@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Security Voice-code Access application is a security system designed to provide access based on voice recognition. The software component utilizes fingerprint and spectrogram concepts, incorporating machine learning classifiers (Random Forest) for enhanced security. The application operates in two modes: Security voice code and Security voice fingerprint.
+The Security Voice-code Access application is a security system designed to provide access based on voice recognition. The software component utilizes fingerprint and spectrogram concepts, incorporating machine learning scikit-learn classifiers (Random Forest) for enhanced security. The application operates in two modes: Security voice code and Security voice fingerprint.
 
 ## Operation Modes
 
